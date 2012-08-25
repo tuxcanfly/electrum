@@ -3,10 +3,20 @@
 # python setup.py sdist --format=zip,gztar
 
 from distutils.core import setup
-from lib.version import ELECTRUM_VERSION as version
-import lib.util as util
 import os, sys, platform
-from lib.util import print_error
+
+# We redefine the method here so we can skip importing electrum itself and make it so we can do a pip install
+def appdata_dir():
+    """Find the path to the application data directory; add an electrum folder and return path."""
+    if platform.system() == "Windows":
+        return os.path.join(os.environ["APPDATA"], "Electrum")
+    elif platform.system() == "Linux":
+        return os.path.join(sys.prefix, "share", "electrum")
+    elif (platform.system() == "Darwin" or
+          platform.system() == "DragonFly"):
+        return "/Library/Application Support/Electrum"
+    else:
+        raise Exception("Unknown system")
 
 if sys.version_info[:3] < (2,6,0):
     sys.exit("Error: Electrum requires Python version >= 2.6.0...")
@@ -25,12 +35,12 @@ if platform.system() != 'Windows' and platform.system() != 'Darwin':
             data_files.append(  ('/usr/share/locale/%s/LC_MESSAGES'%lang, ['locale/%s/LC_MESSAGES/electrum.mo'%lang]) )
 
 data_files += [
-    (util.appdata_dir(), ["data/noface.svg", "data/README"]),
-    (os.path.join(util.appdata_dir(), "cleanlook"), [
+    (appdata_dir(), ["data/noface.svg", "data/README"]),
+    (os.path.join(appdata_dir(), "cleanlook"), [
         "data/cleanlook/name.cfg",
         "data/cleanlook/style.css"
     ]),
-    (os.path.join(util.appdata_dir(), "dark"), [
+    (os.path.join(appdata_dir(), "dark"), [
         "data/dark/background.png",
         "data/dark/name.cfg",
         "data/dark/style.css"
@@ -38,7 +48,7 @@ data_files += [
 ]
 
 setup(name = "Electrum",
-    version = version,
+    version = "1.1.0",
     install_requires = ['slowaes','ecdsa'],
     package_dir = {'electrum': 'lib'},
     scripts= ['electrum'],
