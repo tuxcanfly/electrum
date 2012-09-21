@@ -305,6 +305,7 @@ class Wallet:
         self.frozen_addresses = []
         self.prioritized_addresses = []
         self.expert_mode = False
+        self.cached_balance = 0
         
         self.receipts = {}           # signed URIs
         self.receipt = None          # next receipt
@@ -673,7 +674,8 @@ class Wallet:
             'gap_limit': self.gap_limit,
             'debug_server': self.debug_server,
             'conversion_currency': self.conversion_currency,
-            'theme': self.theme
+            'theme': self.theme,
+            'cached_balance': self.cached_balance
         }
         f = open(self.path,"w")
         f.write( repr(s) )
@@ -719,6 +721,7 @@ class Wallet:
             self.debug_server = d.get('debug_server', False)
             self.conversion_currency = d.get('conversion_currency', 'USD')
             self.theme = d.get('theme', 'Cleanlook')
+            self.cached_balance = d.get("cached_balance", 0)
         except:
             raise IOError("Cannot read wallet file.")
 
@@ -756,6 +759,8 @@ class Wallet:
             c, u = self.get_addr_balance(addr)
             conf += c
             unconf += u
+        self.cached_balance = int(conf) + int(unconf)
+        self.save
         return conf, unconf
 
 

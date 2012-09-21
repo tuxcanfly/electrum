@@ -19,6 +19,7 @@ import webbrowser
 import history_widget
 import wallet_widget
 import util
+import simple_config
 
 import gui_qt
 
@@ -108,6 +109,7 @@ class MiniWindow(QDialog):
 
     def change_wallet(self, item):
       wallet_file = util.user_dir() + "/" + item.text(2)
+      print "Loading: " + wallet_file
       wallet = self.driver.change_wallet(wallet_file)
       self.actuator.wallet = wallet
 
@@ -751,14 +753,18 @@ class MiniDriver(QObject):
 
     def change_wallet(self, wallet_path):
       # Set wallet
+      print "Loading wallet: " + wallet_path
       self.wallet.set_path(wallet_path)
       self.wallet.read()
       self.wallet.force_subscriptions()
 
+      print "Forced wallet"
       # Force updates
       self.update_balance()
       self.update_completions()
       self.update_history()
+      print "Forced UI Updates"
+
       return self.wallet
 
     # This is a hack to workaround that Qt does not like changing the
