@@ -32,7 +32,7 @@ class WalletWidget(QTreeWidget):
         wallet.read()
 
         if wallet.cached_balance:
-          label = "%.2f" % (Decimal(wallet.cached_balance) / 100000000)
+          label = "%.2f BTC" % (Decimal(wallet.cached_balance) / 100000000)
         else:
           label = "not available"
 

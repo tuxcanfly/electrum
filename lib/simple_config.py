@@ -6,7 +6,7 @@ class SimpleConfig:
 
 
     default_options = {"gui": "lite", "proxy": { "mode": "none", "host":"localhost", "port":"8080" },
-    "winpos-qt": [100, 100, 840, 400], "winpos-lite": [4, 25, 351, 149], "history": False }
+        "winpos-qt": [100, 100, 840, 400], "winpos-lite": [4, 25, 351, 149], "history": False, "walletlist": False }
     
     def __init__(self):
         # Find electrum data folder

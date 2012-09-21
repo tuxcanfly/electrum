@@ -190,6 +190,7 @@ class MiniWindow(QDialog):
 
         self.wallet_list = wallet_widget.WalletWidget()
         self.wallet_list.setObjectName("wallet_list")
+        self.wallet_list.hide()
 
         self.wallet_list.itemClicked.connect(self.change_wallet)
 
@@ -229,9 +230,13 @@ class MiniWindow(QDialog):
             theme_action.toggled.connect(delegate)
             theme_group.addAction(theme_action)
         view_menu.addSeparator()
-        show_history = view_menu.addAction(_("Show History"))
+        show_history = view_menu.addAction(_("Toggle history"))
         show_history.setCheckable(True)
         show_history.toggled.connect(self.show_history)
+
+        show_wallets = view_menu.addAction(_("Toggle wallet list"))
+        show_wallets.setCheckable(True)
+        show_wallets.toggled.connect(self.show_wallets)
 
         help_menu = menubar.addMenu(_("&Help"))
         the_website = help_menu.addAction(_("&Website"))
@@ -251,8 +256,12 @@ class MiniWindow(QDialog):
         self.cfg = SimpleConfig()
         g = self.cfg.config["winpos-lite"]
         self.setGeometry(g[0], g[1], g[2], g[3])
+
         show_history.setChecked(self.cfg.config["history"])
+        show_wallets.setChecked(self.cfg.config["walletlist"])
+
         self.show_history(self.cfg.config["history"])
+        self.show_wallets(self.cfg.config["walletlist"])
         
         self.setWindowIcon(QIcon(":electrum.png"))
         self.setWindowTitle("Electrum")
@@ -273,6 +282,7 @@ class MiniWindow(QDialog):
         g = self.geometry()
         self.cfg.set_key("winpos-lite", [g.left(),g.top(),g.width(),g.height()])
         self.cfg.set_key("history", self.history_list.isVisible())
+        self.cfg.set_key("walletlist", self.wallet_list.isVisible())
         self.cfg.save_config()
         
         super(MiniWindow, self).closeEvent(event)
@@ -414,6 +424,12 @@ class MiniWindow(QDialog):
     def show_report_bug(self):
         QMessageBox.information(self, "Electrum - " + _("Reporting Bugs"),
             _("Email bug reports to %s") % "genjix" + "@" + "riseup.net")
+
+    def show_wallets(self, toggle_state):
+        if toggle_state:
+            self.wallet_list.show()
+        else:
+            self.wallet_list.hide()
 
     def show_history(self, toggle_state):
         if toggle_state:
