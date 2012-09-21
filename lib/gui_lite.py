@@ -13,9 +13,10 @@ import os.path
 import random
 import re
 import time
-import wallet
+from wallet import *
 import webbrowser
 import history_widget
+import wallet_widget
 import util
 
 import gui_qt
@@ -68,6 +69,7 @@ class ElectrumGui(QObject):
 
         timer = Timer()
         timer.start()
+        self.mini.driver = driver
         self.expert = gui_qt.ElectrumWindow(self.wallet)
         self.expert.app = self.app
         self.expert.connect_slots(timer)
@@ -102,6 +104,11 @@ class ElectrumGui(QObject):
         return qt_gui_object.restore_or_create()
 
 class MiniWindow(QDialog):
+
+    def change_wallet(self, item):
+      wallet_file = util.user_dir() + "/" + item.text(2)
+      wallet = self.driver.change_wallet(wallet_file)
+      self.actuator.wallet = wallet
 
     def __init__(self, actuator, expand_callback):
         super(MiniWindow, self).__init__()
@@ -177,6 +184,13 @@ class MiniWindow(QDialog):
         self.history_list.hide()
         self.history_list.setAlternatingRowColors(True)
         main_layout.addWidget(self.history_list, 3, 0, 1, -1)
+
+        self.wallet_list = wallet_widget.WalletWidget()
+        self.wallet_list.setObjectName("wallet_list")
+
+        self.wallet_list.itemClicked.connect(self.change_wallet)
+
+        main_layout.addWidget(self.wallet_list, 4, 0, 1, -1)
 
         menubar = QMenuBar()
         electrum_menu = menubar.addMenu(_("&Bitcoin"))
@@ -367,6 +381,7 @@ class MiniWindow(QDialog):
         self.address_completions.setStringList(completions)
 
     def update_history(self, tx_history):
+        self.history_list.clear()
         for tx in tx_history[-10:]:
             address = tx["default_label"]
             amount = D(tx["value"]) / 10**8
@@ -506,8 +521,7 @@ class ReceivePopup(QDialog):
 class MiniActuator:
     """Initialize the definitions relating to themes and 
     sending/recieving bitcoins."""
-    
-    
+     
     def __init__(self, wallet):
         """Retrieve the gui theme used in previous session."""
         self.wallet = wallet
@@ -722,6 +736,18 @@ class MiniDriver(QObject):
         self.connect(self, SIGNAL("updatesignal()"), self.update)
         self.update_callback()
 
+    def change_wallet(self, wallet_path):
+      # Set wallet
+      self.wallet.set_path(wallet_path)
+      self.wallet.read()
+      self.wallet.force_subscriptions()
+
+      # Force updates
+      self.update_balance()
+      self.update_completions()
+      self.update_history()
+      return self.wallet
+
     # This is a hack to workaround that Qt does not like changing the
     # window properties from this other thread before the runloop has
     # been called from.
@@ -785,6 +811,7 @@ class MiniDriver(QObject):
     def update_history(self):
         tx_history = self.wallet.get_tx_history()
         self.window.update_history(tx_history)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

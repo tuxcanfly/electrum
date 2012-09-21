@@ -118,7 +118,6 @@ if __name__ == '__main__':
     parser.add_option("-r", "--remote", dest="remote_url", default=None, help="URL of a remote wallet")
     options, args = parser.parse_args()
 
-
     wallet = Wallet()
     wallet.set_path(options.wallet_path)
     wallet.read()

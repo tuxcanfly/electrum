@@ -1110,12 +1110,13 @@ class Wallet:
         self.interface.poke()
         self.up_to_date_event.wait(10000000000)
 
+    def force_subscriptions(self):
+        self.interface.subscribe(self.all_addresses())
 
     def start_session(self, interface):
         self.interface = interface
         self.interface.send([('server.banner',[]), ('blockchain.numblocks.subscribe',[]), ('server.peers.subscribe',[])])
         self.interface.subscribe(self.all_addresses())
-
 
     def freeze(self,addr):
         if addr in self.all_addresses() and addr not in self.frozen_addresses:
