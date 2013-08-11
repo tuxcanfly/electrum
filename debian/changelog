@@ -1,3 +1,9 @@
+electrum (1.8.1-1ppa1) raring; urgency=low
+
+  * Updated Makefile for icons_rc.py
+
+ -- Jakh Daven <tuxcanfly@gmail.com>  Sun, 11 Aug 2013 23:30:31 +0530
+
 electrum (1.8.1) raring; urgency=low
 
   * Initial release. (Closes: #XXXXXX)
