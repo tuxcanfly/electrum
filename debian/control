@@ -1,0 +1,18 @@
+Source: electrum
+Section: net
+Priority: optional
+Maintainer: Jakh Daven <tuxcanfly@gmail.com>
+Build-Depends: cdbs, debhelper, python-support, python-all
+XS-Python-Version: >=2.4
+Standards-Version: 3.9.4
+
+Package: electrum
+Architecture: all
+Homepage: http://electrum.org/
+XB-Python-Version: ${python:Versions}
+Depends: ${misc:Depends}, ${python:Depends}, python-slowaes, python-ecdsa
+Description: It is an easy to use Bitcoin client.
+ It protects you from losing coins in a backup mistake or computer failure,
+ because your wallet can be recovered from a secret phrase that you can write on
+ paper or learn by heart. There is no waiting time when you start the client,
+ because it does not download the Bitcoin blockchain.
