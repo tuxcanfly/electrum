@@ -11,16 +11,19 @@ all:
 	@echo "make builddeb - Generate a deb package"
 	@echo "make clean - Get rid of scratch and byte files"
 
-source:
+gui/icons_rc.py:
+	pyrcc4 icons.qrc -o gui/icons_rc.py
+
+source: gui/icons_rc.py
 	$(PYTHON) setup.py sdist $(COMPILE)
 
-install:
+install: gui/icons_rc.py
 	$(PYTHON) setup.py install --root $(DESTDIR) $(COMPILE)
 
-buildrpm:
+buildrpm: gui/icons_rc.py
 	$(PYTHON) setup.py bdist_rpm --post-install=rpm/postinstall --pre-uninstall=rpm/preuninstall
 
-builddeb:
+builddeb: gui/icons_rc.py
 	# build the source package in the parent directory
 	# then rename it to project_version.orig.tar.gz
 	$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../ --prune
@@ -32,4 +35,5 @@ clean:
 	$(PYTHON) setup.py clean
 	fakeroot $(MAKE) -f $(CURDIR)/debian/rules clean
 	rm -rf build/ MANIFEST
+	rm -f gui/icons_rc.py
 	find . -name '*.pyc' -delete
