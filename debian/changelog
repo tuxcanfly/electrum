@@ -1,3 +1,9 @@
+electrum (1.8.1-1ppa3) raring; urgency=low
+
+  * Fixed data files when using builddeb
+
+ -- Jakh Daven <tuxcanfly@gmail.com>  Tue, 13 Aug 2013 21:43:24 +0530
+
 electrum (1.8.1-1ppa2) raring; urgency=low
 
   * Notifcation option when receiving new tranactions
